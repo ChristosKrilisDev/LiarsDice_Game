@@ -12,6 +12,8 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
 
+    #region Members
+    
     [SerializeField] private string _playerName ="Jacky";
 
     internal bool _isReady = false;
@@ -27,11 +29,6 @@ public class PlayerController : MonoBehaviour
 
     private PlayerHUD _playerHUD;
     private RoundController _roundController;
-
-
-    #region Members
-
-
 
     #endregion
 
