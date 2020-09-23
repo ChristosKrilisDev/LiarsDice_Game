@@ -11,14 +11,6 @@ public class CameraController : MonoBehaviour
 
     public Transform target;
 
-
-
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         // Rotate the cube by converting the angles into a quaternion.
