@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class DieController : MonoBehaviour
 {
-
+    //Test value for faster seearch
+    [SerializeField] private int dieFaceIndex = 1;
 
     private void Start()
     {
@@ -13,9 +14,8 @@ public class DieController : MonoBehaviour
 
     public void HideDie()
     {
-        gameObject.SetActive(false);
+        //Do something weird and cool to vanish the dice in here
     }
-
 
     public void RotateToFace(int faceNumber)
     {
@@ -23,15 +23,14 @@ public class DieController : MonoBehaviour
             Debug.LogError("You piece of sh*t gave number out of range");
 
         transform.rotation = Quaternion.identity;
-        
-
+        dieFaceIndex = faceNumber;
 
         switch(faceNumber)
         {
 
             case 1:
             {
-                transform.localRotation = Quaternion.Euler(-90,0,0);
+                transform.localRotation = Quaternion.Euler(-90 , 0 , 0);
                 break;
             }
             case 2:

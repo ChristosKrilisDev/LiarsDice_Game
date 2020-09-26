@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class RoundController : MonoBehaviour
 {
-
+    //TODO
+    //ALOT!
+    //:P
     public List<int> dicesvalues;
 
     internal List<int> CreateRNGDiceList(int dicesRange)
@@ -16,17 +18,10 @@ public class RoundController : MonoBehaviour
         for(int i = 0; i < dicesRange; i++)
             dicesvalues.Add(RollDicesValues());
 
-
         return dicesvalues;
     }
 
-    private int RollDicesValues() => Random.Range(1 , 6);
-    //{
-    //    int randNum = Random.Range(1 , 6);
+    private int RollDicesValues() => Random.Range(1 , 7);
 
-    //    return randNum;
-    //}
-
-    //internal void SetGoldBet(bool hasBet) => this._hasBet = hasBet;
 
 }
