@@ -13,17 +13,16 @@ public class PlayerController : MonoBehaviour
 {
 
     #region Members
-
     [SerializeField] private string _playerName = "Jacky";
 
-    //internal bool _isReady = false;
-    //internal bool _hasBet = false;
-    //[SerializeField] private int _gold = 100;       //Later Use : Control the max rounds (-10g / round)
-    //private int _currentBet = 10;       // gold cost / round
-
-
     private List<int> _pDice;      //The list of the dices that the player roll(values)
+    [Header("In game dice Objs ")]
     [SerializeField] private List<DieController> _diceObjs; //In-game dice objects
+
+
+    [Header("Bet Members")]
+    [SerializeField] private int _betAmmount = 1;
+    [SerializeField] private int _betNumber = 1;
 
 
     private PlayerHUD _playerHUD;
@@ -37,26 +36,11 @@ public class PlayerController : MonoBehaviour
         _playerHUD = GetComponent<PlayerHUD>();
         _roundController = FindObjectOfType<RoundController>();
 
+        Init();
     }
     void Start()
     {
-        //Add listener to buttons via script to avoid our dump stupid brain to set them manualy...
-        //_playerHUD._readyBtn.onClick.AddListener(SetReadyAction);
-        //_playerHUD._goldeBtn.onClick.AddListener(BetGoldActionOnClick);
-        _playerHUD._diceRollBtn.onClick.AddListener(RollDiceAction);
 
-        //Bet Btns Listeners
-        //This format is also for multi fuctions insert
-        _playerHUD._increaseAmountBtn.onClick.AddListener(() => { IncreaseAmount(true); });
-        _playerHUD._dicreaseAmountBtn.onClick.AddListener(() => { IncreaseAmount(false); });
-
-        _playerHUD._increaseNumberBtn.onClick.AddListener(() => { IncreaseNumber(true); });
-        _playerHUD._dicreaseNumberBtn.onClick.AddListener(() => { IncreaseNumber(false); });
-
-        _playerHUD._betBtn.onClick.AddListener(BetAction);
-
-        //Initialize Player 
-        //Init();
     }
     void Update()
     {
@@ -70,22 +54,24 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    //TEST: usage = for test perpose is used as reset fuction as well
-    //void Init()
-    //{
-    //}
+    void Init()
+    {
+        _playerHUD.ActivateAll();
+        //Add listener to buttons via script to avoid our dump stupid brain to set them manualy...
+        _playerHUD._diceRollBtn.onClick.AddListener(RollDiceAction);
+
+        //Bet Btns Listeners
+        //This format is also for multi fuctions insert
+        _playerHUD._increaseAmountBtn.onClick.AddListener(() => { IncreaseAmount(true); });
+        _playerHUD._dicreaseAmountBtn.onClick.AddListener(() => { IncreaseAmount(false); });
+
+        _playerHUD._increaseNumberBtn.onClick.AddListener(() => { IncreaseNumber(true); });
+        _playerHUD._dicreaseNumberBtn.onClick.AddListener(() => { IncreaseNumber(false); });
+
+        _playerHUD._betBtn.onClick.AddListener(BetActionClick);
+    }
 
     #region PlayerActionsMethods
-
-    //public void BetGoldActionOnClick()
-    //{
-    //    _playerHUD.UpdateBetActionParameters();
-    //}
-
-    //public void SetReadyAction()
-    //{
-    //    _playerHUD.UpdateReadyActionParemeters();
-    //}
 
     public void RollDiceAction()
     {
@@ -93,8 +79,6 @@ public class PlayerController : MonoBehaviour
         //return a list ot _pDice
         _pDice = _roundController.CreateRNGDiceList(_diceObjs.Count);
 
-        //Update UI
-        _playerHUD.UpdateDiceSlots(_diceObjs.Count);
         _playerHUD.DisplayDiceUI(_pDice);
 
         for(int i = 0; i < _diceObjs.Count; i++)
@@ -103,13 +87,12 @@ public class PlayerController : MonoBehaviour
             _diceObjs[i].RotateToFace(_pDice[i]);
         }
 
-        //RESET USE
-        //Init();
+        //Hide BTN
+        _playerHUD._diceRollBtn.gameObject.SetActive(false);
+        _playerHUD.ActivateActionsUI();
     }
 
-
-    //Later Use
-    //These are the actions that player can take
+    //Player actions
     private void Challenge()
     {
         Debug.Log("Liar action has done");
@@ -118,16 +101,11 @@ public class PlayerController : MonoBehaviour
     #region BetMethods
 
     /// <summary>
-    /// TO DO : 
     /// RULES : Increase amount only towards + , So we need to know the last bet
     ///         Increase number with the same amount
     ///         Increase amount and change any number(1-6)
     ///         
     /// </summary>
-
-    [Header("Bet Members")]
-    [SerializeField] private int _betAmmount = 1;
-    [SerializeField] private int _betNumber = 1;
 
     private void IncreaseAmount(bool IncreaseModifier)
     {
@@ -153,14 +131,14 @@ public class PlayerController : MonoBehaviour
 
         _playerHUD.UpdateAmountText(_betAmmount , _betNumber);
     }
-    private void BetAction()
+    private void BetActionClick()
     {
-        Debug.Log("#Player# You bet , Amount : " + _betAmmount + " and Number : " + _betNumber);
+        _playerHUD.OnBetActionClick();
+        _playerHUD.UpdateBetText(_betAmmount , _betNumber);
+        //Debug.Log("#Player# You bet , Amount : " + _betAmmount + " and Number : " + _betNumber);
     }
     #endregion
-
     #endregion
-
     //Whoever Lose a challenge lose a die and become the first player in next round
     private void LoseDie()
     {
@@ -168,11 +146,18 @@ public class PlayerController : MonoBehaviour
         //remove a die
         _diceObjs[0].HideDie();
         _diceObjs.RemoveAt(0);
+
+        //Update UI
+        _playerHUD.UpdateDiceSlots(_diceObjs.Count);
     }
-
-
     private bool HasLostAllDice()
     {
+        if(_diceObjs.Count == 0)
+        {
+            Debug.Log("No more dice for you mate");
+            _playerHUD.OpenLosePanel();
+        }
+
         bool x = _diceObjs.Count >= 1;
         return !x;
     }

@@ -8,6 +8,7 @@
 !PlayerHUD.cs
 !RoundController.cs
 !DieController.cs
+!UiGroupManager.cs
 # etc...
 
 # ...even if they are in subdirectories
